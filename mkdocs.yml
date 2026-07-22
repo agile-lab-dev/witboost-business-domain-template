@@ -1,0 +1,8 @@
+site_name: "Business Domain Template"
+site_description: "Register a Business Domain entity in the Witboost catalog to organise your data products into functional areas."
+
+nav:
+  - Template Usage: index.md
+
+plugins:
+  - techdocs-core

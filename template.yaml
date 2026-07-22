@@ -1,0 +1,106 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: business-domain-template
+  title: Create Business Domain
+  description: Create a new Business Domain
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  mesh:
+    icon: https://cdn-icons-png.flaticon.com/512/15227/15227040.png
+  tags:
+    - domain
+    - business-domain
+spec:
+  owner: agile_lab
+  type: business-domain
+  parameters:
+    - title: Domain Details
+      required:
+        - name
+        - domainOwner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: The name of the Domain.
+          ui:field: EntityNamePicker
+        description:
+          title: Description
+          type: string
+          description: Detailed description about what functional area this Domain is
+            representing, what purpose it has, and business related information.
+        domainOwner:
+          title: Domain Owner
+          type: string
+          description: The user responsible for ownership of this domain.
+          ui:field: EntityPicker
+          ui:options:
+            allowArbitraryValues: false
+            allowedKinds:
+              - User
+        subDomainOf:
+          type: string
+          title: Is Subdomain of Business Field (Domain)
+          description: Select a business field if this domain is a subdomain of that business field
+          ui:field: EntitySearchPicker
+          ui:options:
+            multiSelection: false
+            entities:
+              - type: Domain
+                displayField: '{{spec.mesh.name}}'
+                returnField: ref
+                userFilters:
+                  - search
+                filter:
+                  practiceShaper:
+                    kind: instanceOf
+                    instanceOf:
+                      - domaintype:default/business-domain
+                columns:
+                  - name: Name
+                    value: name
+                  - name: Description
+                    value: description
+
+
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        targetPath: .
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          normalizedName: ${{ parameters.name.replace(r/[^\w]/g,"") | lower }}
+          domainOwner: ${{ parameters.domainOwner }}
+          subDomainOf: ${{ parameters.subDomainOf }}
+          
+          useCaseTemplateId: urn:dmb:utm:domain-template:0.0.0
+          useCaseTemplateVersion: 0.0.0
+          infrastructureTemplateId: urn:dmb:itm:domain-provisioner:0
+          repoUrl: &repoUrl gitlab.com?owner=AgileDmbSandbox%2F{{orgname}}%2Fmesh.repository%2Fbusiness-domains&repo=${{parameters.name.split(" ") | join("") | lower }}
+    - id: publish
+      name: Publish
+      action: witboostMeshComponent:publish:gitlab
+      input:
+        allowedHosts:
+          - gitlab.com
+        description: This is ${{ parameters.name }}
+        repoUrl: *repoUrl
+        rootDirectory: .
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open Domain
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
