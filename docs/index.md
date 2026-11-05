@@ -28,8 +28,16 @@ Fill in the fields below to describe your domain.
 
 ---
 
+## Repository Details
+
+The template generates the shared GitLab repository URL automatically, targeting `business-domains` in the configured organisation's business-domains group. Replace `{{orgname}}` in both repository URL expressions when configuring the template for your organisation. A missing repository is created by the publish action.
+
+Each domain is stored at `domains/<normalized-name>/catalog-info.yaml`. For example, `Customer Analytics` is stored at `domains/customeranalytics/catalog-info.yaml`. Normalization removes non-word characters and lowercases the name, matching the catalog entity name.
+
+This template requires Witboost version 2.11.5+ in order to work.
+
 ## What happens after you click Create?
 
-1. A Git repository is created with the catalog descriptor (`catalog-info.yaml`).
+1. The catalog descriptor is published to the domain's directory in the shared repository without removing unrelated files.
 2. The entity is registered in the Witboost catalog and immediately visible under **Domains**.
 3. You can start creating Data Products inside the new domain right away.

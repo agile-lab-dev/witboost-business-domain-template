@@ -13,6 +13,7 @@ This repository is part of our [Starter Kit](https://github.com/agile-lab-dev/wi
 
 - [Overview](#overview)
 - [Usage](#usage)
+- [Repository Details](#repository-details)
 
 
 ## Overview
@@ -34,6 +35,15 @@ Domains must exist before Data Products can be created inside them.
 ## Usage
 
 To get information on how to use this template, refer to this [document](./docs/index.md).
+
+
+## Repository Details
+
+The template generates the shared GitLab repository URL automatically, targeting `business-domains` in the configured organisation's business-domains group. Replace `{{orgname}}` in both repository URL expressions when configuring the template for your organisation. A missing repository is created by the publish action.
+
+Each domain is stored at `domains/<normalized-name>/catalog-info.yaml`. For example, `Customer Analytics` is stored at `domains/customeranalytics/catalog-info.yaml`. Normalization removes non-word characters and lowercases the name, matching the catalog entity name.
+
+This template requires Witboost version 2.11.5+ in order to work.
 
 
 ## License
